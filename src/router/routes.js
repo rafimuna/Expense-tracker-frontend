@@ -1,23 +1,35 @@
+import MainLayout from 'layouts/MainLayout.vue'
+import { useAuthStore } from 'stores/auth'
+
+const requireAuth = (to, from, next) => {
+  const auth = useAuthStore()
+  auth.isAuthenticated ? next() : next('/login')
+}
+
 const routes = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    component: MainLayout,
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') },
-      { path: '/Expense', component: () => import('pages/ExpenseList.vue') },
-      { path: '/add', component: () => import('pages/AddExpense.vue') },
+      { path: '', redirect: '/Expense' },
       {
-        path: '/edit/:id',
+        path: 'Expense',
+        component: () => import('pages/ExpenseList.vue'),
+        beforeEnter: requireAuth,
+      },
+      { path: 'add', component: () => import('pages/AddExpense.vue'), beforeEnter: requireAuth },
+      {
+        path: 'edit/:id',
         component: () => import('pages/EditExpense.vue'),
+        beforeEnter: requireAuth,
+      },
+      { path: '/login', component: () => import('pages/LoginPage.vue') },
+      { path: '/register', component: () => import('pages/RegisterPage.vue') },
+      {
+        path: '/:catchAll(.*)*',
+        component: () => import('pages/ErrorNotFound.vue'),
       },
     ],
-  },
-
-  // Always leave this as last one,
-  // but you can also remove it
-  {
-    path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue'),
   },
 ]
 
