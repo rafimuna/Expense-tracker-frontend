@@ -7,12 +7,13 @@
         v-model="form.category"
         :options="categories"
         option-label="name"
-        option-value="name"
+        option-value="id"
         label="Category"
         filled
         emit-value
         map-options
       />
+
       <q-input v-model="form.date" label="Date" type="date" filled required />
       <q-input v-model="form.note" label="Note" type="textarea" filled />
 
@@ -61,4 +62,6 @@ const submitExpense = async () => {
 onMounted(() => {
   fetchCategories()
 })
+
+console.log(form.value.category)
 </script>
